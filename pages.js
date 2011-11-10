@@ -1,1 +1,3 @@
-empty file.
+
+
+exports.init = function(){};

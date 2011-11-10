@@ -1,33 +1,31 @@
 
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    ObjectId = mongoose.ObjectId;
+var Collection = require('../../../system/collection').Collection,
+    Model = require('../../../system/model').Model;
 
 
-var Stamp = new Schema({
-    user: ObjectId,
-    at: Date
-});
-
-var Page = new Schema({
-    title: String,
-    publish: {
-        start: Date,
-        end: Date
-    },
-    content: String,
-    updated: Stamp,
-    created: Stamp
+exports.model = new Class({
     
-
+    Extends: Model,
+    
+    save: function(request){
+        if (!this.updated) {
+            this.updated = {};
+        }
+        this.updated.at = Date.now();
+        if (!this.created) {
+            this.created = {};
+        }
+        this.created.at = Date.now();
+        return this.parent(request);
+    }
 });
 
-Page.pre('save',function(next){
-    core.log('in save middleware');
-    this.updated.at = Date.now();
-    core.debug('model after update in save middleware',this);
-    next();
+
+exports.Collection = new Class({
+
+    Extends: Collection,
+    
+    model: exports.model,
+    
+    name: 'users'
 });
-
-
-mongoose.model('Setting', Settings);
